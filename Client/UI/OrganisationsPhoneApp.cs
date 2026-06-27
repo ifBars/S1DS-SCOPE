@@ -25,28 +25,24 @@ public sealed class OrganisationsPhoneApp : PhoneApp
         Members,
     }
 
-    private static readonly Color BackgroundColor = new Color(0.05f, 0.06f, 0.08f, 1f);
-    private static readonly Color PanelColor = new Color(0.11f, 0.12f, 0.15f, 1f);
-    private static readonly Color SurfaceColor = new Color(0.15f, 0.17f, 0.2f, 1f);
-    private static readonly Color RaisedSurfaceColor = new Color(0.18f, 0.2f, 0.24f, 1f);
-    private static readonly Color AccentColor = new Color(0.21f, 0.57f, 0.94f, 1f);
-    private static readonly Color SecondaryAccentColor = new Color(0.21f, 0.57f, 0.94f, 1f);
-    private static readonly Color WarningColor = new Color(0.68f, 0.3f, 0.2f, 1f);
-    private static readonly Color NeutralButtonColor = new Color(0.27f, 0.31f, 0.33f, 1f);
-    private static readonly Color InputColor = new Color(0.15f, 0.2f, 0.21f, 1f);
-    private static readonly Color DisabledInputColor = new Color(0.11f, 0.13f, 0.14f, 1f);
+    private static readonly Color BackgroundColor = new Color(0.045f, 0.05f, 0.06f, 1f);
+    private static readonly Color PanelColor = new Color(0.095f, 0.105f, 0.12f, 1f);
+    private static readonly Color SurfaceColor = new Color(0.135f, 0.15f, 0.17f, 1f);
+    private static readonly Color RaisedSurfaceColor = new Color(0.18f, 0.195f, 0.22f, 1f);
+    private static readonly Color AccentColor = new Color(0.22f, 0.55f, 0.86f, 1f);
+    private static readonly Color SecondaryAccentColor = new Color(0.25f, 0.62f, 0.45f, 1f);
+    private static readonly Color WarningColor = new Color(0.7f, 0.24f, 0.22f, 1f);
+    private static readonly Color NeutralButtonColor = new Color(0.25f, 0.28f, 0.31f, 1f);
+    private static readonly Color InputColor = new Color(0.12f, 0.16f, 0.18f, 1f);
+    private static readonly Color DisabledInputColor = new Color(0.09f, 0.105f, 0.115f, 1f);
     private static readonly Color OverlayColor = new Color(0f, 0f, 0f, 0.62f);
     private static readonly Color BodyTextColor = new Color(0.88f, 0.89f, 0.92f, 1f);
     private static readonly Color MutedTextColor = new Color(0.67f, 0.69f, 0.74f, 1f);
+    private static readonly Color DisabledTextColor = new Color(0.46f, 0.49f, 0.54f, 1f);
     private static readonly Color LineColor = new Color(1f, 1f, 1f, 0.05f);
 
     private Text? _summaryText;
     private Text? _statusText;
-    private Text? _stateMetricText;
-    private Text? _rosterMetricText;
-    private Text? _balanceMetricText;
-    private Text? _teamMetricText;
-    private Image? _teamMetricSwatch;
     private Text? _onboardingHintText;
     private Text? _onboardingAsideText;
     private Text? _managementHintText;
@@ -132,31 +128,28 @@ public sealed class OrganisationsPhoneApp : PhoneApp
     {
         GameObject background = UIFactory.Panel("MainBackground", container.transform, BackgroundColor, fullAnchor: true);
 
-        GameObject topBar = UIFactory.TopBar("TopBar", background.transform, "Organisations", 0.84f, 70, 70, 0, 35);
+        GameObject topBar = UIFactory.TopBar("TopBar", background.transform, "SCOPE", 0.84f, 70, 70, 0, 35);
         topBar.GetComponent<Image>().color = PanelColor;
-        var (_, refreshButton, _) = UIFactory.RoundedButtonWithLabel("RefreshButton", "Refresh", topBar.transform, AccentColor, 120, 40, 16, Color.white);
+        var (_, refreshButton, _) = UIFactory.RoundedButtonWithLabel("RefreshButton", "Refresh", topBar.transform, SecondaryAccentColor, 112, 42, 15, Color.white);
         ButtonUtils.AddListener(refreshButton, () => OrganisationsClientMod.ActiveInstance?.RefreshSnapshotFromUi());
 
-        GameObject summaryPanel = UIFactory.Panel("SummaryPanel", background.transform, PanelColor, new Vector2(0.03f, 0.05f), new Vector2(0.39f, 0.82f));
-        GameObject summaryBody = CreatePanelBody(summaryPanel, 20f, 20f, 18f, 18f);
-        UIFactory.VerticalLayoutOnGO(summaryBody, 12, new RectOffset(0, 0, 0, 0));
+        GameObject summaryPanel = UIFactory.Panel("SummaryPanel", background.transform, PanelColor, new Vector2(0.03f, 0.04f), new Vector2(0.48f, 0.82f));
+        GameObject summaryBody = CreatePanelBody(summaryPanel, 20f, 18f, 18f, 16f);
+        UIFactory.VerticalLayoutOnGO(summaryBody, 7, new RectOffset(0, 0, 0, 0));
         ConfigureVerticalLayout(summaryBody, forceExpandHeight: false);
 
         _summaryText = UIFactory.Text("SummaryText", string.Empty, summaryBody.transform, 20, TextAnchor.UpperLeft, FontStyle.Bold);
+        ConfigureTextBlock(_summaryText, 44f);
         _statusText = UIFactory.Text("StatusText", string.Empty, summaryBody.transform, 14, TextAnchor.UpperLeft);
         if (_statusText != null)
         {
             _statusText.color = BodyTextColor;
+            ConfigureTextBlock(_statusText, 28f);
         }
-
-        CreateMetricCard(summaryBody.transform, "State", out _stateMetricText);
-        CreateMetricCard(summaryBody.transform, "Roster", out _rosterMetricText);
-        CreateMetricCard(summaryBody.transform, "Balance", out _balanceMetricText);
-        CreateTeamMetricCard(summaryBody.transform, out _teamMetricText, out _teamMetricSwatch);
 
         _tabBar = CreateTabBar(summaryBody.transform);
 
-        GameObject contentPanel = UIFactory.Panel("ContentPanel", background.transform, PanelColor, new Vector2(0.41f, 0f), new Vector2(0.97f, 0.82f));
+        GameObject contentPanel = UIFactory.Panel("ContentPanel", background.transform, PanelColor, new Vector2(0.50f, 0.04f), new Vector2(0.97f, 0.82f));
         _homePagePanel = UIFactory.Panel("HomePage", contentPanel.transform, Color.clear, fullAnchor: true);
         CreateHomePage(_homePagePanel.transform);
         _invitesPanel = CreateSectionPanel(contentPanel.transform, "Invites", out _invitesContent);
@@ -178,6 +171,13 @@ public sealed class OrganisationsPhoneApp : PhoneApp
         TryFocusInput(_createInput);
     }
 
+#if ORG_UI_SMOKE
+    internal string DescribeUiForSmoke()
+    {
+        return $"Open={IsOpen()}|Page={_currentPage}|HomeActive={IsActive(_homePagePanel)}|InvitesActive={IsActive(_invitesPanel)}|MembersActive={IsActive(_membersPanel)}|Summary='{_summaryText?.text ?? string.Empty}'|Status='{_statusText?.text ?? string.Empty}'";
+    }
+#endif
+
     public void RefreshUI()
     {
         if (_summaryText == null || _statusText == null || _invitesContent == null || _membersContent == null || _homePagePanel == null)
@@ -190,7 +190,6 @@ public sealed class OrganisationsPhoneApp : PhoneApp
         {
             _summaryText.text = "Connecting to organisation service...";
             _statusText.text = "Waiting for the latest organisation snapshot from the server.";
-            UpdateSummaryMetrics(new OrganisationSnapshotDto());
             SetCreateState(canCreate: false);
             SetInviteState(canInvite: false, canLeave: false);
             SetInputState(_createInput, _createInputBackground, false, "");
@@ -206,7 +205,6 @@ public sealed class OrganisationsPhoneApp : PhoneApp
         OrganisationSnapshotDto snapshot = client.Snapshot;
         _summaryText.text = BuildSummary(snapshot);
         _statusText.text = BuildStatus(snapshot);
-        UpdateSummaryMetrics(snapshot);
         UpdateOnboardingCopy(snapshot);
         UpdateManagementCopy(snapshot);
         RebuildInvites(snapshot);
@@ -218,8 +216,8 @@ public sealed class OrganisationsPhoneApp : PhoneApp
 
         SetCreateState(canCreate);
         SetInviteState(canInvite, canLeave);
-        SetInputState(_createInput, _createInputBackground, canCreate, "Enter organisation name...");
-        SetInputState(_inviteInput, _inviteInputBackground, canInvite, canInvite ? "Enter player name or Steam ID..." : "Owner or officers can invite players.");
+        SetInputState(_createInput, _createInputBackground, canCreate, "Organisation name");
+        SetInputState(_inviteInput, _inviteInputBackground, canInvite, canInvite ? "Player name or Steam ID" : "Owner or officers can invite players.");
         SyncVisiblePage(snapshot);
 
         if (_focusCreateInputOnNextRefresh && !snapshot.HasOrganisation)
@@ -237,24 +235,32 @@ public sealed class OrganisationsPhoneApp : PhoneApp
     {
         GameObject panel = UIFactory.Panel("TabBar", parent, SurfaceColor);
         LayoutElement panelLayout = panel.AddComponent<LayoutElement>();
-        panelLayout.minHeight = 174f;
-        panelLayout.preferredHeight = 174f;
+        panelLayout.minHeight = 211f;
+        panelLayout.preferredHeight = 211f;
         panelLayout.flexibleWidth = 1f;
 
-        GameObject body = CreatePanelBody(panel, 20f, 26f, 14f, 14f);
-        UIFactory.VerticalLayoutOnGO(body, 8, new RectOffset(0, 0, 0, 0));
+        GameObject body = CreatePanelBody(panel, 0f, 0f, 0f, 0f);
+        UIFactory.VerticalLayoutOnGO(body, 1, new RectOffset(0, 0, 0, 0));
         ConfigureVerticalLayout(body, forceExpandHeight: false);
 
-        Text pagesLabel = UIFactory.Text("PagesLabel", "Pages", body.transform, 13, TextAnchor.MiddleLeft, FontStyle.Bold);
-        pagesLabel.color = MutedTextColor;
+        (_homeTabButton, _homeTabLabel) = CreateNavigationRow(body.transform, "Overview", "Create or manage");
+        (_invitesTabButton, _invitesTabLabel) = CreateNavigationRow(body.transform, "Invites", "No pending crews");
+        (_membersTabButton, _membersTabLabel) = CreateNavigationRow(body.transform, "Roster", "Join or create first");
 
-        (_, _homeTabButton, _homeTabLabel) = UIFactory.RoundedButtonWithLabel("HomeTab", "Home", body.transform, NeutralButtonColor, 156, 34, 14, Color.white);
-        (_, _invitesTabButton, _invitesTabLabel) = UIFactory.RoundedButtonWithLabel("InvitesTab", "Invites", body.transform, NeutralButtonColor, 156, 34, 14, Color.white);
-        (_, _membersTabButton, _membersTabLabel) = UIFactory.RoundedButtonWithLabel("MembersTab", "Members", body.transform, NeutralButtonColor, 156, 34, 14, Color.white);
+        if (_homeTabButton != null)
+        {
+            ButtonUtils.AddListener(_homeTabButton, () => SetPage(Page.Home));
+        }
 
-        ButtonUtils.AddListener(_homeTabButton, () => SetPage(Page.Home));
-        ButtonUtils.AddListener(_invitesTabButton, () => SetPage(Page.Invites));
-        ButtonUtils.AddListener(_membersTabButton, () => SetPage(Page.Members));
+        if (_invitesTabButton != null)
+        {
+            ButtonUtils.AddListener(_invitesTabButton, () => SetPage(Page.Invites));
+        }
+
+        if (_membersTabButton != null)
+        {
+            ButtonUtils.AddListener(_membersTabButton, () => SetPage(Page.Members));
+        }
 
         return panel;
     }
@@ -262,33 +268,35 @@ public sealed class OrganisationsPhoneApp : PhoneApp
     private void CreateHomePage(Transform parent)
     {
         GameObject root = UIFactory.Panel("HomeRoot", parent, Color.clear, fullAnchor: true);
-        GameObject body = CreatePanelBody(root, 34f, 40f, 16f, 68f);
-        UIFactory.VerticalLayoutOnGO(body, 14, new RectOffset(0, 0, 0, 0));
-        ConfigureVerticalLayout(body, forceExpandHeight: false);
+        GameObject body = CreatePanelBody(root, 14f, 14f, 14f, 14f);
+        UIFactory.VerticalLayoutOnGO(body, 0, new RectOffset(0, 0, 0, 0));
+        ConfigureVerticalLayout(body, forceExpandHeight: true);
 
-        _homeCreatePanel = CreateContentCard("HomeCreatePanel", body.transform, 236f);
-        GameObject createBody = CreatePanelBody(_homeCreatePanel, 28f, 22f, 20f, 16f);
-        UIFactory.VerticalLayoutOnGO(createBody, 10, new RectOffset(0, 0, 0, 0));
+        _homeCreatePanel = CreateContentCard("HomeCreatePanel", body.transform, 320f);
+        GameObject createBody = CreatePanelBody(_homeCreatePanel, 22f, 22f, 20f, 18f);
+        UIFactory.VerticalLayoutOnGO(createBody, 12, new RectOffset(0, 0, 0, 0));
         ConfigureVerticalLayout(createBody, forceExpandHeight: false);
 
-        UIFactory.Text("OnboardingTitle", "Create your organisation", createBody.transform, 20, TextAnchor.MiddleLeft, FontStyle.Bold);
+        UIFactory.Text("OnboardingTitle", "Create organisation", createBody.transform, 19, TextAnchor.MiddleLeft, FontStyle.Bold);
         _onboardingHintText = UIFactory.Text("OnboardingHint", string.Empty, createBody.transform, 14, TextAnchor.UpperLeft);
         if (_onboardingHintText != null)
         {
             _onboardingHintText.color = BodyTextColor;
         }
 
-        (_createInput, _createInputBackground) = CreateSingleLineInput(createBody.transform, 42f, "Enter organisation name...");
-
-        GameObject buttonRow = UIFactory.ButtonRow("OnboardingButtons", createBody.transform, 12f, TextAnchor.MiddleLeft);
-        (_, _createButton, _createButtonLabel) = UIFactory.RoundedButtonWithLabel("CreateButton", "Create Organisation", buttonRow.transform, AccentColor, 210, 38, 15, Color.white);
-        (_, _laterButton, _laterButtonLabel) = UIFactory.RoundedButtonWithLabel("LaterButton", "Later", buttonRow.transform, NeutralButtonColor, 110, 38, 15, Color.white);
+        (_createInput, _createInputBackground) = CreateSingleLineInput(createBody.transform, 40f, "Organisation name");
 
         _onboardingAsideText = UIFactory.Text("OnboardingAsideText", string.Empty, createBody.transform, 13, TextAnchor.UpperLeft, FontStyle.Italic);
         if (_onboardingAsideText != null)
         {
             _onboardingAsideText.color = MutedTextColor;
         }
+
+        CreateFlexibleSpacer(createBody.transform);
+
+        GameObject buttonRow = UIFactory.ButtonRow("OnboardingButtons", createBody.transform, 12f, TextAnchor.MiddleRight);
+        (_, _createButton, _createButtonLabel) = UIFactory.RoundedButtonWithLabel("CreateButton", "Create", buttonRow.transform, AccentColor, 132, 36, 14, Color.white);
+        (_, _laterButton, _laterButtonLabel) = UIFactory.RoundedButtonWithLabel("LaterButton", "Close", buttonRow.transform, NeutralButtonColor, 104, 36, 14, Color.white);
 
         if (_createButton != null)
         {
@@ -300,29 +308,31 @@ public sealed class OrganisationsPhoneApp : PhoneApp
             ButtonUtils.AddListener(_laterButton, CloseApp);
         }
 
-        _homeManagePanel = CreateContentCard("HomeManagePanel", body.transform, 220f);
-        GameObject manageBody = CreatePanelBody(_homeManagePanel, 28f, 22f, 18f, 18f);
-        UIFactory.VerticalLayoutOnGO(manageBody, 10, new RectOffset(0, 0, 0, 0));
+        _homeManagePanel = CreateContentCard("HomeManagePanel", body.transform, 320f);
+        GameObject manageBody = CreatePanelBody(_homeManagePanel, 22f, 22f, 20f, 18f);
+        UIFactory.VerticalLayoutOnGO(manageBody, 12, new RectOffset(0, 0, 0, 0));
         ConfigureVerticalLayout(manageBody, forceExpandHeight: false);
 
-        UIFactory.Text("ManagementTitle", "Organisation hub", manageBody.transform, 20, TextAnchor.MiddleLeft, FontStyle.Bold);
+        UIFactory.Text("ManagementTitle", "Organisation hub", manageBody.transform, 19, TextAnchor.MiddleLeft, FontStyle.Bold);
         _managementHintText = UIFactory.Text("ManagementHint", string.Empty, manageBody.transform, 14, TextAnchor.UpperLeft);
         if (_managementHintText != null)
         {
             _managementHintText.color = BodyTextColor;
         }
 
-        (_inviteInput, _inviteInputBackground) = CreateSingleLineInput(manageBody.transform, 42f, "Enter player name or Steam ID...");
-
-        GameObject buttonRowManage = UIFactory.ButtonRow("ManagementButtons", manageBody.transform, 16f, TextAnchor.MiddleLeft);
-        (_, _inviteButton, _inviteButtonLabel) = UIFactory.RoundedButtonWithLabel("InviteButton", "Invite Player", buttonRowManage.transform, AccentColor, 160, 38, 15, Color.white);
-        (_, _leaveButton, _leaveButtonLabel) = UIFactory.RoundedButtonWithLabel("LeaveButton", "Leave Organisation", buttonRowManage.transform, WarningColor, 190, 38, 15, Color.white);
+        (_inviteInput, _inviteInputBackground) = CreateSingleLineInput(manageBody.transform, 40f, "Player name or Steam ID");
 
         _managementAsideText = UIFactory.Text("ManagementAsideText", string.Empty, manageBody.transform, 13, TextAnchor.UpperLeft, FontStyle.Italic);
         if (_managementAsideText != null)
         {
             _managementAsideText.color = MutedTextColor;
         }
+
+        CreateFlexibleSpacer(manageBody.transform);
+
+        GameObject buttonRowManage = UIFactory.ButtonRow("ManagementButtons", manageBody.transform, 16f, TextAnchor.MiddleRight);
+        (_, _inviteButton, _inviteButtonLabel) = UIFactory.RoundedButtonWithLabel("InviteButton", "Invite", buttonRowManage.transform, AccentColor, 118, 36, 14, Color.white);
+        (_, _leaveButton, _leaveButtonLabel) = UIFactory.RoundedButtonWithLabel("LeaveButton", "Leave", buttonRowManage.transform, WarningColor, 118, 36, 14, Color.white);
 
         if (_inviteButton != null)
         {
@@ -457,12 +467,13 @@ public sealed class OrganisationsPhoneApp : PhoneApp
         for (int i = 0; i < snapshot.PendingInvites.Count; i++)
         {
             OrganisationInviteDto invite = snapshot.PendingInvites[i];
-            GameObject row = CreateCard($"Invite_{invite.InviteId}", _invitesContent, 120f);
-            AddCardContent(row, invite.OrganisationName, $"Invited by {invite.InviterName}  ·  Expires {FormatExpiry(invite.ExpiresAtUnixTimeSeconds)}");
+            GameObject row = CreateCard($"Invite_{invite.InviteId}", _invitesContent, 122f);
+            AddCardContent(row, invite.OrganisationName, $"Invited by {invite.InviterName} | Expires {FormatExpiry(invite.ExpiresAtUnixTimeSeconds)}");
+            CreateStatusPill(row.transform, "Pending", AccentColor);
 
             GameObject buttonRow = UIFactory.ButtonRow("InviteActions", row.transform, 14f, TextAnchor.MiddleLeft);
-            var (_, acceptButton, _) = UIFactory.RoundedButtonWithLabel("AcceptButton", "Accept", buttonRow.transform, AccentColor, 96, 34, 14, Color.white);
-            var (_, declineButton, _) = UIFactory.RoundedButtonWithLabel("DeclineButton", "Decline", buttonRow.transform, WarningColor, 96, 34, 14, Color.white);
+            var (_, acceptButton, _) = UIFactory.RoundedButtonWithLabel("AcceptButton", "Accept", buttonRow.transform, AccentColor, 92, 32, 13, Color.white);
+            var (_, declineButton, _) = UIFactory.RoundedButtonWithLabel("DeclineButton", "Decline", buttonRow.transform, WarningColor, 92, 32, 13, Color.white);
             ButtonUtils.AddListener(acceptButton, () => OrganisationsClientMod.ActiveInstance?.AcceptInvite(invite.InviteId));
             ButtonUtils.AddListener(declineButton, () => OrganisationsClientMod.ActiveInstance?.DeclineInvite(invite.InviteId));
         }
@@ -487,57 +498,32 @@ public sealed class OrganisationsPhoneApp : PhoneApp
         {
             OrganisationMemberDto member = snapshot.Members[i];
             bool canManageThisMember = canManageMembers && !IsSelf(snapshot, member);
-            GameObject row = CreateCard($"Member_{member.SteamId}", _membersContent, canManageThisMember ? 126f : 98f);
-            string subtitle = $"{member.Role}  ·  {(member.IsOnline ? "Online" : "Offline")}";
-            AddCardContent(row, member.DisplayName, subtitle, centered: true);
+            GameObject row = CreateCard($"Member_{member.SteamId}", _membersContent, canManageThisMember ? 126f : 96f);
+            string selfSuffix = IsSelf(snapshot, member) ? " | You" : string.Empty;
+            AddCardContent(row, member.DisplayName, $"{member.Role}{selfSuffix}");
+            CreateStatusPill(row.transform, member.IsOnline ? "Online" : "Offline", member.IsOnline ? SecondaryAccentColor : NeutralButtonColor);
 
             if (canManageThisMember)
             {
                 GameObject buttonRow = UIFactory.ButtonRow("MemberActions", row.transform, 14f, TextAnchor.MiddleLeft);
                 var (_, kickButton, _) = UIFactory.RoundedButtonWithLabel("KickButton", "Kick", buttonRow.transform, WarningColor, 80, 32, 13, Color.white);
-                var (_, transferButton, _) = UIFactory.RoundedButtonWithLabel("TransferButton", "Transfer Owner", buttonRow.transform, NeutralButtonColor, 130, 32, 13, Color.white);
+                var (_, transferButton, _) = UIFactory.RoundedButtonWithLabel("TransferButton", "Transfer", buttonRow.transform, NeutralButtonColor, 102, 32, 13, Color.white);
                 ButtonUtils.AddListener(kickButton, () => ConfirmKickMember(member));
                 ButtonUtils.AddListener(transferButton, () => ConfirmTransferOwnership(member));
             }
         }
     }
 
-    private void UpdateSummaryMetrics(OrganisationSnapshotDto snapshot)
-    {
-        if (_stateMetricText == null || _rosterMetricText == null || _balanceMetricText == null || _teamMetricText == null)
-        {
-            return;
-        }
-
-        if (!snapshot.HasOrganisation)
-        {
-            _stateMetricText.text = snapshot.ShouldShowOnboarding ? "Ready to create" : "Unaffiliated";
-            _rosterMetricText.text = snapshot.PendingInvites.Count == 1 ? "1 pending invite" : $"{snapshot.PendingInvites.Count} pending invites";
-            _balanceMetricText.text = $"${snapshot.OnlineBalance:0.##} (Personal)";
-            _teamMetricText.text = "None";
-            SetTeamSwatchColor(string.Empty);
-            return;
-        }
-
-        _stateMetricText.text = snapshot.PlayerRole;
-        _rosterMetricText.text = snapshot.Members.Count == 1 ? "1 member" : $"{snapshot.Members.Count} members";
-        _balanceMetricText.text = snapshot.VictoryOnlineBalanceTarget > 0f
-            ? $"${snapshot.OnlineBalance:0.##} / ${snapshot.VictoryOnlineBalanceTarget:0.##}"
-            : $"${snapshot.OnlineBalance:0.##}";
-        _teamMetricText.text = string.IsNullOrWhiteSpace(snapshot.TeamColorHex) ? "Unassigned" : snapshot.TeamColorHex.ToUpperInvariant();
-        SetTeamSwatchColor(snapshot.TeamColorHex);
-    }
-
     private void SetCreateState(bool canCreate)
     {
-        SetButtonState(_createButton, _createButtonLabel, canCreate, "Create Organisation");
-        SetButtonState(_laterButton, _laterButtonLabel, canCreate, "Later");
+        SetButtonState(_createButton, _createButtonLabel, canCreate, "Create");
+        SetButtonState(_laterButton, _laterButtonLabel, canCreate, "Close");
     }
 
     private void SetInviteState(bool canInvite, bool canLeave)
     {
-        SetButtonState(_inviteButton, _inviteButtonLabel, canInvite, "Invite Player");
-        SetButtonState(_leaveButton, _leaveButtonLabel, canLeave, "Leave Organisation");
+        SetButtonState(_inviteButton, _inviteButtonLabel, canInvite, "Invite");
+        SetButtonState(_leaveButton, _leaveButtonLabel, canLeave, "Leave");
     }
 
     private void SyncVisiblePage(OrganisationSnapshotDto snapshot)
@@ -585,9 +571,17 @@ public sealed class OrganisationsPhoneApp : PhoneApp
 
     private void UpdateTabVisuals(bool hasOrganisation)
     {
-        UpdateTabButton(_homeTabButton, _homeTabLabel, _currentPage == Page.Home, "Home", true);
-        UpdateTabButton(_invitesTabButton, _invitesTabLabel, _currentPage == Page.Invites, "Invites", true);
-        UpdateTabButton(_membersTabButton, _membersTabLabel, _currentPage == Page.Members, "Members", hasOrganisation);
+        OrganisationSnapshotDto snapshot = OrganisationsClientMod.ActiveInstance?.Snapshot ?? new OrganisationSnapshotDto();
+        string inviteText = snapshot.PendingInvites.Count > 0
+            ? BuildNavigationText($"Invites ({snapshot.PendingInvites.Count})", "Review pending crews")
+            : BuildNavigationText("Invites", "No pending crews");
+        string memberText = hasOrganisation
+            ? BuildNavigationText($"Roster ({snapshot.Members.Count})", "Members and ownership")
+            : BuildNavigationText("Roster", "Join or create first");
+
+        UpdateTabButton(_homeTabButton, _homeTabLabel, _currentPage == Page.Home, BuildNavigationText("Overview", "Create or manage"), true);
+        UpdateTabButton(_invitesTabButton, _invitesTabLabel, _currentPage == Page.Invites, inviteText, true);
+        UpdateTabButton(_membersTabButton, _membersTabLabel, _currentPage == Page.Members, memberText, hasOrganisation);
     }
 
     private static void UpdateTabButton(Button? button, Text? label, bool isActive, string text, bool enabled)
@@ -598,15 +592,46 @@ public sealed class OrganisationsPhoneApp : PhoneApp
         }
 
         button.interactable = enabled;
+        ApplyButtonTint(button);
         label.text = text;
+        label.alignment = TextAnchor.MiddleLeft;
         if (button.image != null)
         {
             button.image.color = !enabled
-                ? new Color(0.16f, 0.16f, 0.18f, 1f)
-                : isActive ? AccentColor : NeutralButtonColor;
+                ? new Color(0.13f, 0.14f, 0.15f, 1f)
+                : isActive ? AccentColor : RaisedSurfaceColor;
         }
 
-        label.color = enabled ? Color.white : MutedTextColor;
+        label.color = enabled ? Color.white : DisabledTextColor;
+    }
+
+    private static (Button? button, Text? label) CreateNavigationRow(Transform parent, string title, string subtitle)
+    {
+        var (_, button, label) = UIFactory.RoundedButtonWithLabel("Nav" + title, BuildNavigationText(title, subtitle), parent, RaisedSurfaceColor, 300, 69, 13, Color.white);
+        if (button != null)
+        {
+            ApplyButtonTint(button);
+            LayoutElement layoutElement = button.gameObject.GetComponent<LayoutElement>() ?? button.gameObject.AddComponent<LayoutElement>();
+            layoutElement.minHeight = 69f;
+            layoutElement.preferredHeight = 69f;
+            layoutElement.flexibleWidth = 1f;
+        }
+
+        if (label != null)
+        {
+            label.alignment = TextAnchor.MiddleLeft;
+            label.lineSpacing = 0.9f;
+            RectTransform rectTransform = label.GetComponent<RectTransform>();
+            rectTransform.offsetMin = new Vector2(18f, 4f);
+            rectTransform.offsetMax = new Vector2(-14f, -4f);
+        }
+
+        return (button, label);
+    }
+
+    private static string BuildNavigationText(string title, string subtitle)
+    {
+        return $"{title}\n{subtitle}";
     }
 
     private void UpdateOnboardingCopy(OrganisationSnapshotDto snapshot)
@@ -618,15 +643,15 @@ public sealed class OrganisationsPhoneApp : PhoneApp
 
         if (snapshot.PendingInvites.Count > 0)
         {
-            _onboardingHintText.text = "You can create your own organisation here or review your pending invites below before deciding.";
+            _onboardingHintText.text = "Start a crew or review pending invites first.";
         }
         else if (snapshot.ShouldShowOnboarding)
         {
-            _onboardingHintText.text = "Welcome. Create an organisation now to get your group set up, or close the app and come back later from your phone home screen.";
+            _onboardingHintText.text = "Create a crew for shared progression and roster control.";
         }
         else
         {
-            _onboardingHintText.text = "Create an organisation here whenever you are ready.";
+            _onboardingHintText.text = "You are playing solo. Create a crew whenever you are ready.";
         }
 
         if (_onboardingAsideText == null)
@@ -635,8 +660,8 @@ public sealed class OrganisationsPhoneApp : PhoneApp
         }
 
         _onboardingAsideText.text = snapshot.PendingInvites.Count > 0
-            ? $"Pending invites: {snapshot.PendingInvites.Count}\n\nReview the invite list below before creating your own organisation if you want to join an existing crew instead."
-            : "Creating an organisation makes you the owner. You will be able to invite members, manage the roster, and transfer ownership later from this same app.";
+            ? $"Pending invites: {snapshot.PendingInvites.Count}. Check Invites before creating a crew."
+            : "You become owner and can invite members later.";
     }
 
     private void UpdateManagementCopy(OrganisationSnapshotDto snapshot)
@@ -648,15 +673,15 @@ public sealed class OrganisationsPhoneApp : PhoneApp
 
         if (IsOwner(snapshot))
         {
-            _managementHintText.text = "Invite players, manage the roster, and transfer ownership from this hub.";
+            _managementHintText.text = "Invite players and manage ownership from the roster.";
         }
         else if (HasInvitePermission(snapshot))
         {
-            _managementHintText.text = "You can invite players and review the roster here. Owner-only actions stay on the member cards.";
+            _managementHintText.text = "Invite players here. Owner-only actions stay on roster cards.";
         }
         else
         {
-            _managementHintText.text = "Review your organisation here. Only the owner or officers can send new invites.";
+            _managementHintText.text = "Review your crew status. Owner or officers handle invites.";
         }
 
         if (_managementAsideText == null)
@@ -666,17 +691,17 @@ public sealed class OrganisationsPhoneApp : PhoneApp
 
         if (IsOwner(snapshot))
         {
-            _managementAsideText.text = "Owners can invite players, kick members, and transfer ownership. Use the member cards below for the owner-only actions.";
+            _managementAsideText.text = "Roster cards include kick and transfer actions for owners.";
             return;
         }
 
         if (HasInvitePermission(snapshot))
         {
-            _managementAsideText.text = "Officers can send invites and review the full roster, but owner-only actions remain protected.";
+            _managementAsideText.text = "Officers can invite players. Ownership actions remain protected.";
             return;
         }
 
-        _managementAsideText.text = "Members can review invites, the roster, and organisation status here. Ask the owner or an officer when new invites need to be sent.";
+        _managementAsideText.text = "Members can inspect status and roster without changing crew membership.";
     }
 
     private static void SetButtonState(Button? button, Text? label, bool enabled, string text)
@@ -720,7 +745,7 @@ public sealed class OrganisationsPhoneApp : PhoneApp
     private static GameObject CreateSectionPanel(Transform parent, string title, out RectTransform content)
     {
         GameObject panel = UIFactory.Panel($"{title}Panel", parent, Color.clear, fullAnchor: true);
-        GameObject body = CreatePanelBody(panel, 38f, 40f, 16f, 68f);
+        GameObject body = CreatePanelBody(panel, 14f, 14f, 14f, 14f);
         UIFactory.VerticalLayoutOnGO(body, 12, new RectOffset(0, 0, 0, 0));
         ConfigureVerticalLayout(body, forceExpandHeight: false);
 
@@ -765,6 +790,24 @@ public sealed class OrganisationsPhoneApp : PhoneApp
         subtitleText.color = new Color(0.79f, 0.83f, 0.84f, 1f);
     }
 
+    private static void CreateStatusPill(Transform parent, string text, Color color)
+    {
+        GameObject pill = UIFactory.Panel("StatusPill", parent, color);
+        LayoutElement layoutElement = pill.AddComponent<LayoutElement>();
+        layoutElement.minHeight = 24f;
+        layoutElement.preferredHeight = 24f;
+        layoutElement.preferredWidth = 96f;
+        layoutElement.flexibleWidth = 0f;
+
+        Text label = UIFactory.Text("StatusText", text, pill.transform, 12, TextAnchor.MiddleCenter, FontStyle.Bold);
+        RectTransform labelRect = label.GetComponent<RectTransform>();
+        labelRect.anchorMin = Vector2.zero;
+        labelRect.anchorMax = Vector2.one;
+        labelRect.offsetMin = new Vector2(10f, 2f);
+        labelRect.offsetMax = new Vector2(-10f, -2f);
+        label.color = Color.white;
+    }
+
     private static void RebuildEmptyState(RectTransform content, string message)
     {
         UIFactory.ClearChildren(content);
@@ -780,8 +823,8 @@ public sealed class OrganisationsPhoneApp : PhoneApp
         if (!snapshot.HasOrganisation)
         {
             return snapshot.PendingInvites.Count > 0
-                ? $"You are not in an organisation yet. Personal balance: ${snapshot.OnlineBalance:0.##}. Pending invites: {snapshot.PendingInvites.Count}."
-                : $"You are not in an organisation yet. Personal balance: ${snapshot.OnlineBalance:0.##}.";
+                ? $"Solo operator\n{snapshot.PendingInvites.Count} pending invite{(snapshot.PendingInvites.Count == 1 ? string.Empty : "s")}"
+                : "Solo operator\nNo active crew";
         }
 
         string teamLine = string.IsNullOrWhiteSpace(snapshot.TeamColorHex)
@@ -791,7 +834,7 @@ public sealed class OrganisationsPhoneApp : PhoneApp
             ? $"\nTarget: ${snapshot.OnlineBalance:0.##} / ${snapshot.VictoryOnlineBalanceTarget:0.##}{(snapshot.HasReachedVictoryTarget ? " complete" : string.Empty)}"
             : string.Empty;
 
-        return $"{snapshot.OrganisationName}\nRole: {snapshot.PlayerRole}\nMembers: {snapshot.Members.Count}\nBalance: ${snapshot.OnlineBalance:0.##}{victoryLine}{teamLine}";
+        return $"{snapshot.OrganisationName}\n{snapshot.PlayerRole} | {snapshot.Members.Count} member{(snapshot.Members.Count == 1 ? string.Empty : "s")}{victoryLine}{teamLine}";
     }
 
     private static string BuildStatus(OrganisationSnapshotDto snapshot)
@@ -799,15 +842,15 @@ public sealed class OrganisationsPhoneApp : PhoneApp
         if (!snapshot.HasOrganisation)
         {
             return snapshot.PendingInvites.Count > 0
-                ? "Use this hub to create your own organisation or accept an invite from the list below."
-                : "Use this hub to create and manage your organisation from your phone.";
+                ? "Review invites or create your own crew."
+                : "Create a crew when you want shared progression.";
         }
 
         if (IsOwner(snapshot))
         {
             return snapshot.HasReachedVictoryTarget
                 ? "Your organisation has reached the configured victory target."
-                : "You can invite players, manage members,\nand transfer ownership from this app.";
+                : "Owner controls are available in the roster.";
         }
 
         if (snapshot.HasReachedVictoryTarget)
@@ -816,8 +859,8 @@ public sealed class OrganisationsPhoneApp : PhoneApp
         }
 
         return HasInvitePermission(snapshot)
-            ? "You can invite players and review your organisation roster here."
-            : "Review your organisation roster here. Owner-only actions remain restricted.";
+            ? "You can invite players and review roster state."
+            : "Roster and status are read-only for your role.";
     }
 
     private static string FormatExpiry(long expiresAtUnixTimeSeconds)
@@ -919,6 +962,34 @@ public sealed class OrganisationsPhoneApp : PhoneApp
         Controls.IsTyping = true;
     }
 
+    private static void ConfigureTextBlock(Text text, float minHeight)
+    {
+        LayoutElement layoutElement = text.gameObject.GetComponent<LayoutElement>() ?? text.gameObject.AddComponent<LayoutElement>();
+        layoutElement.minHeight = minHeight;
+        layoutElement.preferredHeight = minHeight;
+        layoutElement.flexibleWidth = 1f;
+    }
+
+    private static void ApplyButtonTint(Button button)
+    {
+        ColorBlock colors = button.colors;
+        colors.normalColor = Color.white;
+        colors.highlightedColor = new Color(1f, 1f, 1f, 0.92f);
+        colors.pressedColor = new Color(0.88f, 0.9f, 0.95f, 1f);
+        colors.selectedColor = Color.white;
+        colors.disabledColor = Color.white;
+        colors.colorMultiplier = 1f;
+        colors.fadeDuration = 0.08f;
+        button.colors = colors;
+    }
+
+#if ORG_UI_SMOKE
+    private static bool IsActive(GameObject? gameObject)
+    {
+        return gameObject != null && gameObject.activeInHierarchy;
+    }
+#endif
+
     private static GameObject CreatePanelBody(GameObject panel, float left, float right, float top, float bottom)
     {
         GameObject body = new GameObject("Body");
@@ -931,7 +1002,25 @@ public sealed class OrganisationsPhoneApp : PhoneApp
         return body;
     }
 
-    private static GameObject CreateStretchRow(string name, Transform parent, float spacing, int padLeft = 0, int padRight = 0, int padTop = 0, int padBottom = 0)
+    private static void CreateFlexibleSpacer(Transform parent)
+    {
+        GameObject spacer = new GameObject("FlexibleSpacer");
+        spacer.transform.SetParent(parent, false);
+        spacer.AddComponent<RectTransform>();
+        LayoutElement layoutElement = spacer.AddComponent<LayoutElement>();
+        layoutElement.minHeight = 8f;
+        layoutElement.flexibleHeight = 1f;
+    }
+
+    private static GameObject CreateStretchRow(
+        string name,
+        Transform parent,
+        float spacing,
+        int padLeft = 0,
+        int padRight = 0,
+        int padTop = 0,
+        int padBottom = 0,
+        bool forceExpandWidth = true)
     {
         GameObject row = new GameObject(name);
         row.transform.SetParent(parent, false);
@@ -942,60 +1031,10 @@ public sealed class OrganisationsPhoneApp : PhoneApp
         layout.childAlignment = TextAnchor.UpperLeft;
         layout.childControlWidth = true;
         layout.childControlHeight = true;
-        layout.childForceExpandWidth = true;
+        layout.childForceExpandWidth = forceExpandWidth;
         layout.childForceExpandHeight = false;
         row.AddComponent<LayoutElement>().flexibleWidth = 1f;
         return row;
-    }
-
-    private static void CreateMetricCard(Transform parent, string label, out Text valueText)
-    {
-        GameObject card = UIFactory.Panel(label + "Metric", parent, SurfaceColor);
-        LayoutElement layoutElement = card.AddComponent<LayoutElement>();
-        layoutElement.minHeight = 76f;
-        layoutElement.flexibleWidth = 1f;
-        UIFactory.VerticalLayoutOnGO(card, 6, new RectOffset(16, 16, 14, 14));
-
-        Text labelText = UIFactory.Text("Label", label, card.transform, 12, TextAnchor.MiddleLeft, FontStyle.Bold);
-        labelText.color = MutedTextColor;
-        valueText = UIFactory.Text("Value", string.Empty, card.transform, 15, TextAnchor.UpperLeft, FontStyle.Bold);
-        valueText.color = Color.white;
-    }
-
-    private static void CreateTeamMetricCard(Transform parent, out Text valueText, out Image swatch)
-    {
-        GameObject card = UIFactory.Panel("TeamMetric", parent, SurfaceColor);
-        LayoutElement layoutElement = card.AddComponent<LayoutElement>();
-        layoutElement.minHeight = 76f;
-        layoutElement.flexibleWidth = 1f;
-        UIFactory.VerticalLayoutOnGO(card, 6, new RectOffset(16, 16, 14, 14));
-
-        Text labelText = UIFactory.Text("Label", "Team", card.transform, 12, TextAnchor.MiddleLeft, FontStyle.Bold);
-        labelText.color = MutedTextColor;
-
-        GameObject row = CreateStretchRow("TeamMetricRow", card.transform, 8f);
-        GameObject swatchObject = UIFactory.Panel("TeamColor", row.transform, NeutralButtonColor);
-        LayoutElement swatchLayout = swatchObject.AddComponent<LayoutElement>();
-        swatchLayout.minWidth = 22f;
-        swatchLayout.preferredWidth = 22f;
-        swatchLayout.minHeight = 22f;
-        swatchLayout.preferredHeight = 22f;
-        swatch = swatchObject.GetComponent<Image>();
-
-        valueText = UIFactory.Text("Value", string.Empty, row.transform, 15, TextAnchor.MiddleLeft, FontStyle.Bold);
-        valueText.color = Color.white;
-    }
-
-    private void SetTeamSwatchColor(string hexColor)
-    {
-        if (_teamMetricSwatch == null)
-        {
-            return;
-        }
-
-        _teamMetricSwatch.color = ColorUtility.TryParseHtmlString(hexColor, out Color parsed)
-            ? parsed
-            : NeutralButtonColor;
     }
 
     private static GameObject CreateContentCard(string name, Transform parent, float minHeight)
@@ -1004,6 +1043,7 @@ public sealed class OrganisationsPhoneApp : PhoneApp
         LayoutElement layoutElement = card.AddComponent<LayoutElement>();
         layoutElement.minHeight = minHeight;
         layoutElement.flexibleWidth = 1f;
+        layoutElement.flexibleHeight = 1f;
         return card;
     }
 

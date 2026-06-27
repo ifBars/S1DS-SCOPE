@@ -3,7 +3,7 @@ namespace DedicatedServerMod.Organisations;
 internal static class Constants
 {
     public const string ModName = "Organisations";
-    public const string ModVersion = "0.1.0";
+    public const string ModVersion = "1.0.0";
     public const string ModAuthor = "Bars";
     public const string SaveFileName = "Organisations";
     public const string ConfigFileName = "config.toml";

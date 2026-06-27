@@ -58,6 +58,9 @@ public sealed class OrganisationsClientMod : ClientMelonModBase
     private OrganisationCustomerScopeClientService _customerScopeClientService = null!;
     private OrganisationTeamAppearanceService _teamAppearanceService = null!;
     private OrganisationWorkflowSmokeRunner? _workflowSmokeRunner;
+#if ORG_UI_SMOKE
+    private OrganisationPhoneAppUiSmokeProbe? _phoneAppUiSmokeProbe;
+#endif
     private bool _snapshotRequested;
     private bool _snapshotRequestQueued;
     private DateTime _snapshotRequestDueAtUtc;
@@ -168,6 +171,9 @@ public sealed class OrganisationsClientMod : ClientMelonModBase
         _questScopeClientService.Tick();
         _customerScopeClientService.Tick();
         _workflowSmokeRunner?.Tick(_hasSnapshot, _state.Snapshot);
+#if ORG_UI_SMOKE
+        _phoneAppUiSmokeProbe?.Tick(_hasSnapshot);
+#endif
         if (_hasSnapshot)
         {
             _teamAppearanceService.Tick(_state.Snapshot);
@@ -1525,6 +1531,12 @@ public sealed class OrganisationsClientMod : ClientMelonModBase
             CreateOrganisation,
             InvitePlayer,
             AcceptInvite);
+#if ORG_UI_SMOKE
+        _phoneAppUiSmokeProbe = new OrganisationPhoneAppUiSmokeProbe(
+            OrganisationPhoneAppUiSmokeOptions.Parse(Environment.GetCommandLineArgs()),
+            _logger,
+            OpenOrganisationHub);
+#endif
         ActiveInstance = this;
     }
 }

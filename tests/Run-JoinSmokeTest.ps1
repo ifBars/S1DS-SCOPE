@@ -31,8 +31,10 @@ param(
     [int]$ClientJoinBeforeNextLaunchTimeoutSeconds = 150,
     [switch]$BuildAndDeploy,
     [switch]$RunOrganisationWorkflowSmoke,
+    [switch]$RunPhoneAppUiSmoke,
     [string]$SmokeOrganisationName = "RPSmokeCrew",
     [int]$WorkflowInviteDelaySeconds = 80,
+    [int]$UiSmokeCaptureDelaySeconds = 3,
     [switch]$AllowExtraMods,
     [switch]$ArchiveDedicatedServerSave,
     [switch]$HideClients,
@@ -233,7 +235,7 @@ function Test-LogHasPattern {
         [string]$Pattern
     )
 
-    return (Test-Path -LiteralPath $Path) -and (Select-String -LiteralPath $Path -Pattern $Pattern -Quiet)
+    return (Test-Path -LiteralPath $Path) -and (Select-String -LiteralPath $Path -Pattern $Pattern -SimpleMatch -Quiet)
 }
 
 function Normalize-ArgumentList {
@@ -270,6 +272,7 @@ function Get-RelevantTimeline {
         "OnClientMessageReceived cmd=",
         "Received organisation custom message",
         "[OrgSmoke]",
+        "[OrgUiSmoke]",
         "Received organisation command 'org_create_request'",
         "Received organisation command 'org_invite_request'",
         "Received organisation command 'org_invite_accept_request'",
@@ -374,8 +377,10 @@ function Invoke-BuildAndDeploy {
         throw "Mono_Server build failed"
     }
 
+    $uiSmokeBuildProperty = if ($RunPhoneAppUiSmoke) { "-p:EnableUiSmokeProbe=true" } else { "-p:EnableUiSmokeProbe=false" }
+
     Write-Step "Building Organisations Mono client"
-    dotnet build $addonRoot -c Mono_Client -p:AutomateLocalDeployment=false
+    dotnet build $addonRoot -c Mono_Client -p:AutomateLocalDeployment=false $uiSmokeBuildProperty
     if ($LASTEXITCODE -ne 0) {
         throw "Mono_Client build failed"
     }
@@ -431,6 +436,10 @@ else {
 
 if ($RunOrganisationWorkflowSmoke -and $ClientCount -lt 2) {
     throw "RunOrganisationWorkflowSmoke requires ClientCount of at least 2."
+}
+
+if ($RunPhoneAppUiSmoke -and $ClientCount -lt 1) {
+    throw "RunPhoneAppUiSmoke requires at least one client."
 }
 
 $ExtraServerArgs = Normalize-ArgumentList -Arguments $ExtraServerArgs
@@ -556,6 +565,15 @@ try {
                 $clientArgs += "--org-smoke-auto-accept-invites"
             }
         }
+        if ($RunPhoneAppUiSmoke -and $i -eq 0) {
+            $clientArgs += @(
+                "--org-ui-smoke",
+                "--org-ui-smoke-output-dir",
+                (Join-Path $resultsDir "ui-smoke"),
+                "--org-ui-smoke-capture-delay-seconds",
+                $UiSmokeCaptureDelaySeconds.ToString()
+            )
+        }
         if ($ExtraClientArgs.Count -gt 0) {
             $clientArgs += $ExtraClientArgs
         }
@@ -654,6 +672,21 @@ try {
         }
     }
 
+    $uiSmokePassed = $false
+    if ($RunPhoneAppUiSmoke) {
+        foreach ($log in $clientRunLogs) {
+            if ((Test-Path -LiteralPath $log) -and (Test-LogHasPattern -Path $log -Pattern "[OrgUiSmoke] PASS phone app opened and layout snapshot captured.")) {
+                $uiSmokePassed = $true
+                break
+            }
+        }
+
+        if (-not $uiSmokePassed) {
+            $failed = $true
+            $failureReasons.Add("Client log did not contain phone app UI smoke PASS marker.")
+        }
+    }
+
     if (Test-Path -LiteralPath $serverLog) {
         Copy-Item -LiteralPath $serverLog -Destination (Join-Path $resultsDir "Server.Latest.log") -Force
     }
@@ -687,8 +720,10 @@ try {
     $summary += "ClientCount=$ClientCount"
     $summary += "ClientRunLogCount=$($clientRunLogs.Count)"
     $summary += "RunOrganisationWorkflowSmoke=$RunOrganisationWorkflowSmoke"
+    $summary += "RunPhoneAppUiSmoke=$RunPhoneAppUiSmoke"
     $summary += "SmokeOrganisationName=$SmokeOrganisationName"
     $summary += "WorkflowInviteDelaySeconds=$WorkflowInviteDelaySeconds"
+    $summary += "UiSmokeCaptureDelaySeconds=$UiSmokeCaptureDelaySeconds"
     $summary += "WaitForClientJoinBeforeNextLaunch=$WaitForClientJoinBeforeNextLaunch"
     $summary += "AllowExtraMods=$AllowExtraMods"
     $summary += "StopExistingProcesses=$StopExistingProcesses"
@@ -700,6 +735,9 @@ try {
         $summary += "ServerFinalSnapshotsSeen=$serverFinalSnapshotsSeen"
         $summary += "WorkflowCompleteCount=$workflowCompleteCount"
         $summary += "ExpectedWorkflowCompleteCount=$expectedWorkflowCompleteCount"
+    }
+    if ($RunPhoneAppUiSmoke) {
+        $summary += "PhoneAppUiSmokePassed=$uiSmokePassed"
     }
     $summary += "Failed=$failed"
     foreach ($reason in $failureReasons) {

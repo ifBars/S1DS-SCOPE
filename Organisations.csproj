@@ -56,6 +56,10 @@
     <OutputPath>bin\$(Configuration)\</OutputPath>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(EnableUiSmokeProbe)' == 'true' And ('$(Configuration)'=='Mono_Client' Or '$(Configuration)'=='Il2cpp_Client')">
+    <DefineConstants>$(DefineConstants);ORG_UI_SMOKE</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="tests\**\*.cs" />
   </ItemGroup>
@@ -122,6 +126,12 @@
     <Reference Include="UnityEngine.UIModule">
       <HintPath>$(ManagedPath)\UnityEngine.UIModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.ScreenCaptureModule">
+      <HintPath>$(ManagedPath)\UnityEngine.ScreenCaptureModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.ImageConversionModule">
+      <HintPath>$(ManagedPath)\UnityEngine.ImageConversionModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.TextRenderingModule">
       <HintPath>$(ManagedPath)\UnityEngine.TextRenderingModule.dll</HintPath>
     </Reference>
@@ -160,6 +170,12 @@
     </Reference>
     <Reference Include="UnityEngine.UIModule">
       <HintPath>$(ManagedPath)\UnityEngine.UIModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.ScreenCaptureModule">
+      <HintPath>$(ManagedPath)\UnityEngine.ScreenCaptureModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.ImageConversionModule">
+      <HintPath>$(ManagedPath)\UnityEngine.ImageConversionModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.TextRenderingModule">
       <HintPath>$(ManagedPath)\UnityEngine.TextRenderingModule.dll</HintPath>
