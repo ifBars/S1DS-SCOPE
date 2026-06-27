@@ -1,0 +1,188 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\..\DedicatedServerMod\local.build.props" Condition="Exists('..\..\DedicatedServerMod\local.build.props')" />
+  <Import Project="local.build.props" Condition="Exists('local.build.props')" />
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>DedicatedServerMod.Organisations</RootNamespace>
+    <LangVersion>default</LangVersion>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <Configurations>Mono_Client;Mono_Server;Il2cpp_Client;Il2cpp_Server</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Il2cpp_Client' Or '$(Configuration)'=='Il2cpp_Server'">
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Mono_Client'">
+    <GamePath>$(MonoGamePath)</GamePath>
+    <ManagedPath>$(GamePath)\Schedule I_Data\Managed</ManagedPath>
+    <MelonLoaderPath>$(GamePath)\MelonLoader\net35</MelonLoaderPath>
+    <ModsPath>$(GamePath)\Mods</ModsPath>
+    <DefineConstants>MONO;CLIENT</DefineConstants>
+    <AssemblyName>Organisations_Mono_Client</AssemblyName>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Mono_Server'">
+    <GamePath>$(MonoGamePath)</GamePath>
+    <ManagedPath>$(GamePath)\Schedule I_Data\Managed</ManagedPath>
+    <MelonLoaderPath>$(GamePath)\MelonLoader\net35</MelonLoaderPath>
+    <ModsPath>$(GamePath)\Mods</ModsPath>
+    <DefineConstants>MONO;SERVER</DefineConstants>
+    <AssemblyName>Organisations_Mono_Server</AssemblyName>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Il2cpp_Client'">
+    <GamePath>$(Il2CppGamePath)</GamePath>
+    <ManagedPath>$(GamePath)\MelonLoader\Il2CppAssemblies</ManagedPath>
+    <MelonLoaderPath>$(GamePath)\MelonLoader\net6</MelonLoaderPath>
+    <ModsPath>$(GamePath)\Mods</ModsPath>
+    <DefineConstants>IL2CPP;CLIENT</DefineConstants>
+    <AssemblyName>Organisations_Il2cpp_Client</AssemblyName>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Il2cpp_Server'">
+    <GamePath>$(Il2CppGamePath)</GamePath>
+    <ManagedPath>$(GamePath)\MelonLoader\Il2CppAssemblies</ManagedPath>
+    <MelonLoaderPath>$(GamePath)\MelonLoader\net6</MelonLoaderPath>
+    <ModsPath>$(GamePath)\Mods</ModsPath>
+    <DefineConstants>IL2CPP;SERVER</DefineConstants>
+    <AssemblyName>Organisations_Il2cpp_Server</AssemblyName>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="tests\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\DedicatedServerMod\DedicatedServerMod.csproj" AdditionalProperties="Configuration=$(Configuration);EffectiveConfiguration=$(Configuration)" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Configuration)'=='Mono_Client'">
+    <Reference Include="S1API">
+      <HintPath>..\..\S1API\S1API\bin\MonoMelon\netstandard2.1\S1API.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Configuration)'=='Il2cpp_Client'">
+    <Reference Include="S1API">
+      <HintPath>..\..\S1API\S1API\bin\Il2CppMelon\net6.0\S1API.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Configuration)'=='Mono_Client' Or '$(Configuration)'=='Mono_Server'">
+    <Reference Include="MelonLoader">
+      <HintPath>$(MelonLoaderPath)\MelonLoader.dll</HintPath>
+    </Reference>
+    <Reference Include="0Harmony">
+      <HintPath>$(MelonLoaderPath)\0Harmony.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Configuration)'=='Il2cpp_Client' Or '$(Configuration)'=='Il2cpp_Server'">
+    <Reference Include="MelonLoader">
+      <HintPath>$(MelonLoaderPath)\MelonLoader.dll</HintPath>
+    </Reference>
+    <Reference Include="0Harmony">
+      <HintPath>$(MelonLoaderPath)\0Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="Il2CppInterop.Runtime">
+      <HintPath>$(MelonLoaderPath)\Il2CppInterop.Runtime.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Configuration)'=='Mono_Client' Or '$(Configuration)'=='Mono_Server'">
+    <Reference Include="Assembly-CSharp">
+      <HintPath>$(ManagedPath)\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="FishNet.Runtime">
+      <HintPath>$(ManagedPath)\FishNet.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>$(ManagedPath)\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>$(ManagedPath)\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(ManagedPath)\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.InputLegacyModule">
+      <HintPath>$(ManagedPath)\UnityEngine.InputLegacyModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>$(ManagedPath)\UnityEngine.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UIModule">
+      <HintPath>$(ManagedPath)\UnityEngine.UIModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>$(ManagedPath)\UnityEngine.TextRenderingModule.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>$(ManagedPath)\Unity.TextMeshPro.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Configuration)'=='Il2cpp_Client' Or '$(Configuration)'=='Il2cpp_Server'">
+    <Reference Include="Assembly-CSharp">
+      <HintPath>$(ManagedPath)\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>$(ManagedPath)\Assembly-CSharp-firstpass.dll</HintPath>
+    </Reference>
+    <Reference Include="Il2CppFishNet.Runtime">
+      <HintPath>$(ManagedPath)\Il2CppFishNet.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="Il2CppNewtonsoft.Json">
+      <HintPath>$(ManagedPath)\Il2CppNewtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Il2Cppmscorlib">
+      <HintPath>$(ManagedPath)\Il2Cppmscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>$(ManagedPath)\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(ManagedPath)\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.InputLegacyModule">
+      <HintPath>$(ManagedPath)\UnityEngine.InputLegacyModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>$(ManagedPath)\UnityEngine.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UIModule">
+      <HintPath>$(ManagedPath)\UnityEngine.UIModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>$(ManagedPath)\UnityEngine.TextRenderingModule.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>$(ManagedPath)\Unity.TextMeshPro.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <PropertyGroup>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <ClientDeployModsPath Condition="'$(ClientDeployModsPath)' == ''"></ClientDeployModsPath>
+    <ServerDeployModsPath Condition="'$(ServerDeployModsPath)' == ''"></ServerDeployModsPath>
+  </PropertyGroup>
+
+  <Target Name="PostBuildClient" AfterTargets="Build" Condition="'$(AutomateLocalDeployment)' != 'false' and ('$(Configuration)'=='Mono_Client' Or '$(Configuration)'=='Il2cpp_Client') and Exists('$(ClientDeployModsPath)')">
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ClientDeployModsPath)" SkipUnchangedFiles="false" />
+  </Target>
+
+  <Target Name="PostBuildServer" AfterTargets="Build" Condition="'$(AutomateLocalDeployment)' != 'false' and ('$(Configuration)'=='Mono_Server' Or '$(Configuration)'=='Il2cpp_Server') and Exists('$(ServerDeployModsPath)')">
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ServerDeployModsPath)" SkipUnchangedFiles="false" />
+  </Target>
+</Project>

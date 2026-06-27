@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <DefineConstants>CLIENT</DefineConstants>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="..\..\Client\Testing\OrganisationWorkflowSmokeOptions.cs" Link="OrganisationWorkflowSmokeOptions.cs" />
+    <Compile Include="..\..\Constants.cs" Link="Constants.cs" />
+    <Compile Include="..\..\Contracts\OrganisationMessages.cs" Link="Contracts\OrganisationMessages.cs" />
+    <Compile Include="..\..\Domain\ActiveCustomerContractReservationRecord.cs" Link="Domain\ActiveCustomerContractReservationRecord.cs" />
+    <Compile Include="..\..\Domain\CartelActivityScopeRecord.cs" Link="Domain\CartelActivityScopeRecord.cs" />
+    <Compile Include="..\..\Domain\OrganisationScopeRules.cs" Link="Domain\OrganisationScopeRules.cs" />
+    <Compile Include="..\..\Domain\OrganisationRole.cs" Link="Domain\OrganisationRole.cs" />
+    <Compile Include="..\..\Domain\OrganisationRecord.cs" Link="Domain\OrganisationRecord.cs" />
+    <Compile Include="..\..\Domain\OrganisationInvite.cs" Link="Domain\OrganisationInvite.cs" />
+    <Compile Include="..\..\Domain\OwnerScopeKind.cs" Link="Domain\OwnerScopeKind.cs" />
+    <Compile Include="..\..\Domain\PhysicalWorldReservationRecord.cs" Link="Domain\PhysicalWorldReservationRecord.cs" />
+    <Compile Include="..\..\Domain\ProductMixRecipeScopeRecord.cs" Link="Domain\ProductMixRecipeScopeRecord.cs" />
+    <Compile Include="..\..\Domain\ProductMarketScopeRecord.cs" Link="Domain\ProductMarketScopeRecord.cs" />
+    <Compile Include="..\..\Domain\PropertyReservationRecord.cs" Link="Domain\PropertyReservationRecord.cs" />
+    <Compile Include="..\..\Domain\PropertyScopeRecord.cs" Link="Domain\PropertyScopeRecord.cs" />
+    <Compile Include="..\..\Domain\QuestScopeRecord.cs" Link="Domain\QuestScopeRecord.cs" />
+    <Compile Include="..\..\Domain\ScopedContractRecord.cs" Link="Domain\ScopedContractRecord.cs" />
+    <Compile Include="..\..\Domain\ScopedCustomerRecord.cs" Link="Domain\ScopedCustomerRecord.cs" />
+    <Compile Include="..\..\Domain\ScopedDealerRecord.cs" Link="Domain\ScopedDealerRecord.cs" />
+    <Compile Include="..\..\Domain\ScopedSupplierRecord.cs" Link="Domain\ScopedSupplierRecord.cs" />
+    <Compile Include="..\..\Domain\ScopedWalletRecord.cs" Link="Domain\ScopedWalletRecord.cs" />
+    <Compile Include="..\..\Domain\VehicleOwnershipRecord.cs" Link="Domain\VehicleOwnershipRecord.cs" />
+    <Compile Include="..\..\Persistence\OrganisationSaveData.cs" Link="Persistence\OrganisationSaveData.cs" />
+  </ItemGroup>
+</Project>

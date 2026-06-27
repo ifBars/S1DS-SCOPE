@@ -1,0 +1,26 @@
+{
+  "$schema": "https://raw.githubusercontent.com/dotnet/docfx/main/schemas/docfx.schema.json",
+  "build": {
+    "content": [
+      {
+        "files": [
+          "index.md",
+          "docs/**.md",
+          "toc.yml",
+          "docs/toc.yml"
+        ]
+      }
+    ],
+    "output": "_site",
+    "globalMetadata": {
+      "_appTitle": "Organisations",
+      "_appName": "Organisations",
+      "_enableSearch": true,
+      "_disableContribution": true
+    },
+    "template": [
+      "default",
+      "modern"
+    ]
+  }
+}

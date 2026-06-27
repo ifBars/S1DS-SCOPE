@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <!-- Optional local deployment targets. Copy this file to local.build.props and adjust paths. -->
+    <ClientDeployModsPath>C:\Path\To\Schedule I\Mods</ClientDeployModsPath>
+    <ServerDeployModsPath>C:\Path\To\Schedule I_server\Mods</ServerDeployModsPath>
+  </PropertyGroup>
+</Project>
